@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Artworkpics</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<style>
+:root{--bg:#faf8f5;--card:#fff;--ink:#1d1b19;--mut:#6f6a64;--line:#e6e1da;--acc:#2f6f4f;--accbg:#e4f1ea;--warn:#8a6a1f;--warnbg:#f6ecd3;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#141311;--card:#1f1d1a;--ink:#f2eee8;--mut:#a39d94;--line:#34312d;--acc:#6fcf9b;--accbg:#1f3328;--warn:#e3c26b;--warnbg:#3a3220;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Georgia,"Times New Roman",serif;line-height:1.5}
+.w{max-width:960px;margin:0 auto;padding:20px 16px 60px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;gap:8px;flex-wrap:wrap}
+.logo{font-size:22px;font-weight:bold}
+.logo span{color:var(--acc)}
+button{font:inherit;cursor:pointer}
+.hb{display:flex;gap:8px;flex-wrap:wrap}
+.up{background:none;border:1px solid var(--line);color:var(--ink);padding:8px 14px;border-radius:99px;font-family:system-ui,sans-serif;font-size:14px}
+.up.on{background:var(--acc);color:var(--bg);border-color:var(--acc)}
+.pri{background:var(--acc);color:var(--bg);border:0;border-radius:10px;padding:12px;font-family:system-ui,sans-serif;font-weight:600;width:100%;margin-top:6px}
+h1{font-size:clamp(28px,6vw,44px);line-height:1.1;margin:0 0 10px;letter-spacing:-1px}
+.sub{color:var(--mut);margin:0 0 22px;font-size:17px}
+.sb{display:flex;gap:8px}
+.sb input{flex:1;min-width:0;padding:14px 16px;font:inherit;font-size:16px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink)}
+.sb button{background:var(--acc);color:var(--bg);border:0;border-radius:12px;padding:0 20px;font-family:system-ui,sans-serif;font-weight:600}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 0}
+.chip{background:var(--card);border:1px solid var(--line);color:var(--mut);border-radius:99px;padding:6px 14px;font-size:14px;font-family:system-ui,sans-serif}
+.chip.on{background:var(--acc);color:var(--bg);border-color:var(--acc)}
+.note{font-family:system-ui,sans-serif;font-size:14px;color:var(--mut);margin:16px 0;min-height:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer;text-align:left;padding:0;color:var(--ink)}
+.ph{height:200px;background:var(--line) center top/cover}
+.cb{padding:12px 14px 14px}
+.cb b{display:block;font-size:16px;margin-bottom:4px}
+.cb span{font-family:system-ui,sans-serif;font-size:13px;color:var(--mut)}
+.tag{display:inline-block;font-family:system-ui,sans-serif;font-size:12px;padding:2px 9px;border-radius:99px;margin-top:8px;color:var(--warn);background:var(--warnbg)}
+.tag.v{color:var(--acc);background:var(--accbg)}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:16px;z-index:20}
+.ov.on{display:flex}
+.md{background:var(--card);border-radius:16px;max-width:460px;width:100%;max-height:90%;overflow:auto}
+.full{display:block;width:100%;height:auto;max-height:70vh;object-fit:contain;background:#000}
+.md .cb{padding:18px}
+.md h2{margin:0 0 6px;font-size:22px}
+.md p{margin:8px 0}
+.x{float:right;background:none;border:0;color:var(--mut);font-size:15px;font-family:system-ui,sans-serif}
+.md input,.md textarea,.md select{width:100%;margin:6px 0;padding:10px;font:inherit;font-size:15px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+.msg{font-family:system-ui,sans-serif;font-size:14px;color:var(--warn);min-height:20px}
+.sec{background:none;border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:10px;width:100%;margin-top:8px;font-family:system-ui,sans-serif}
+.rl{font-family:system-ui,sans-serif;font-size:14px;color:var(--warn);background:var(--warnbg);border-radius:10px;padding:10px 12px;margin-top:10px}
+.rl div{margin:4px 0}
+</style>
+</head>
+<body>
+<div class="w">
+<header><div class="logo">Artwork<span>pics</span></div><div class="hb" id="hb"></div></header>
+<h1>FIND IMAGES CAPTURED ACROSS THE WORLD NO AI</h1>
+<p class="sub">Word adventure in one place</p>
+<div class="sb"><input id="q" placeholder="e.g. old man laughing in the rain" onkeydown="if(event.key==='Enter')load()"><button onclick="load()">Search</button></div>
+<div class="chips" id="chips"></div>
+<p class="note" id="note"></p>
+<div class="grid" id="grid"></div>
+</div>
+<div class="ov" id="ov" onclick="if(event.target===this)closeM()"><div class="md" id="md"></div></div>
+
+<script>
+var sb=supabase.createClient("https://ugxyuewnsaynldgnbslz.supabase.co","sb_publishable_4VFlzFNSc3DnfVpzqJk52Q_fFZceFiE");
+var user=null,isAdmin=false,adminView=false,reportView=false,cat="";
+var CATS=["People","Nature","Street","Family","Other"];
+var REASONS=["Looks AI-generated or fake","Inappropriate or harmful","I am in this photo and want it removed","Other"];
+function $(i){return document.getElementById(i)}
+function esc(s){var d=document.createElement("div");d.textContent=s==null?"":s;return d.innerHTML}
+function imgUrl(p){return sb.storage.from("photos").getPublicUrl(p).data.publicUrl}
+function openM(h){$("md").innerHTML=h;$("ov").classList.add("on")}
+function closeM(){$("ov").classList.remove("on")}
+
+function chips(){
+ var c=$("chips");c.innerHTML="";
+ ["All"].concat(CATS).forEach(function(n){
+  var b=document.createElement("button");
+  b.className="chip"+((n==="All"&&!cat)||n===cat?" on":"");
+  b.textContent=n;
+  b.onclick=function(){cat=(n==="All")?"":n;chips();load()};
+  c.appendChild(b)})}
+
+function header(){
+ var h=$("hb");
+ if(user){
+  h.innerHTML=(isAdmin?'<button class="up'+(adminView?' on':'')+'" onclick="toggleAdmin()">Admin: '+(adminView?'on':'off')+'</button><button class="up'+(reportView?' on':'')+'" onclick="toggleReports()">Reports</button>':'')+'<button class="up" onclick="openUp()">+ Share a photo</button><button class="up" onclick="logout()">Log out</button>'}
+ else{h.innerHTML='<button class="up" onclick="openAuth()">Log in / Sign up</button>'}
+}
+function toggleAdmin(){adminView=!adminView;reportView=false;header();load()}
+function toggleReports(){reportView=!reportView;adminView=false;header();load()}
+async function setUser(s){
+ user=s?s.user:null;isAdmin=false;
+ if(user){var r=await sb.from("admins").select("user_id").eq("user_id",user.id);isAdmin=!!(r.data&&r.data.length)}
+ else{adminView=false;reportView=false}
+ header();load()}
+
+function openAuth(){
+ openM('<div class="cb"><button class="x" onclick="closeM()">Close ✕</button><h2>Welcome</h2><p style="color:var(--mut)">Log in or create an account to continue.</p><input id="em" type="email" placeholder="Email"><input id="pw" type="password" placeholder="Password (6+ characters)"><div class="msg" id="am"></div><button class="pri" onclick="auth(false)">Log in</button><button class="sec" onclick="auth(true)">Create account</button></div>')}
+async function auth(isSignup){
+ var e=$("em").value.trim(),p=$("pw").value,m=$("am");
+ if(!e||p.length<6){m.textContent="Enter your email and a password of 6+ characters.";return}
+ m.textContent="Please wait…";
+ var r=isSignup?await sb.auth.signUp({email:e,password:p}):await sb.auth.signInWithPassword({email:e,password:p});
+ if(r.error){m.textContent=r.error.message;return}
+ if(isSignup&&!r.data.session){m.textContent="Account created. Check your email and tap the confirm link, then log in.";return}
+ closeM()}
+async function logout(){await sb.auth.signOut()}
+
+function openUp(){
+ var opts=CATS.map(function(c){return'<option>'+c+'</option>'}).join("");
+ openM('<div class="cb"><button class="x" onclick="closeM()">Close ✕</button><h2>Share a real photo</h2><input type="file" id="f" accept="image/*"><input id="t1" placeholder="Photo title"><select id="cs"><option value="">Choose a category</option>'+opts+'</select><input id="w1" placeholder="Where and when was it taken?"><textarea id="s1" rows="3" placeholder="What was the moment about?"></textarea><label style="font-family:system-ui,sans-serif;font-size:14px;color:var(--mut)"><input type="checkbox" id="ck" style="width:auto"> I took this photo, and people in it are fine with it being shared.</label><div class="msg" id="um"></div><button class="pri" id="ub" onclick="upload()">Upload</button></div>')}
+async function upload(){
+ var f=$("f").files[0],m=$("um");
+ if(!f){m.textContent="Please choose a photo.";return}
+ if(!$("ck").checked){m.textContent="Please confirm the box above.";return}
+ if(!$("t1").value.trim()){m.textContent="Please add a title.";return}
+ if(!$("cs").value){m.textContent="Please choose a category.";return}
+ $("ub").disabled=true;m.textContent="Uploading…";
+ var ext=(f.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"");
+ var path=user.id+"/"+Date.now()+"."+ext;
+ var u=await sb.storage.from("photos").upload(path,f,{contentType:f.type});
+ if(u.error){m.textContent="Upload failed: "+u.error.message;$("ub").disabled=false;return}
+ var r=await sb.from("photos").insert({title:$("t1").value.trim(),category:$("cs").value,place:$("w1").value.trim(),story:$("s1").value.trim(),image_path:path});
+ if(r.error){m.textContent="Saving failed: "+r.error.message;$("ub").disabled=false;return}
+ closeM();$("q").value="";load()}
+
+async function load(){
+ var q=$("q").value.trim().toLowerCase().replace(/[,()%*]/g," "),n=$("note");
+ var w=q.split(/\s+/).filter(function(x){return x.length>2});
+ var req;
+ if(reportView){
+  var rr=await sb.from("reports").select("photo_id");
+  if(rr.error){n.textContent="Could not load reports: "+rr.error.message;return}
+  var ids=[];rr.data.forEach(function(x){if(ids.indexOf(x.photo_id)<0)ids.push(x.photo_id)});
+  if(!ids.length){n.textContent="No reports. All clear.";render([]);return}
+  var pr=await sb.from("photos").select("*").in("id",ids).order("created_at",{ascending:false});
+  if(pr.error){n.textContent="Could not load photos: "+pr.error.message;return}
+  n.textContent="Reports: "+pr.data.length+" reported photo"+(pr.data.length>1?"s":"")+". Tap one to review.";
+  render(pr.data);return}
+ req=sb.from("photos").select("*").order("created_at",{ascending:false}).limit(60);
+ if(adminView)req=req.eq("verified",false);
+ if(cat)req=req.eq("category",cat);
+ if(w.length){req=req.or(w.map(function(x){return"title.ilike.%"+x+"%,place.ilike.%"+x+"%,story.ilike.%"+x+"%"}).join(","))}
+ var r=await req;
+ if(r.error){n.textContent="Could not load photos: "+r.error.message;return}
+ var d=r.data,where=cat?" in "+cat:"";
+ if(adminView){n.textContent=d.length?"Admin view: "+d.length+" photo"+(d.length>1?"s":"")+" awaiting check"+where+". Tap one to verify or delete it.":"Admin view: nothing is waiting for a check"+where+"."}
+ else if(w.length&&!d.length){
+  var all=await sb.from("photos").select("*").order("created_at",{ascending:false}).limit(6);
+  d=all.data||[];n.textContent=d.length?"No exact match for “"+q+"”"+where+". Here are the latest real moments instead.":"No photos yet. Be the first to share one."}
+ else if(!d.length){n.textContent=cat?"No photos in "+cat+" yet.":"No photos yet. Log in and share the first one."}
+ else{n.textContent=w.length?d.length+" match"+(d.length>1?"es":"")+" for “"+q+"”"+where+".":d.length+" real moment"+(d.length>1?"s":"")+where+"."}
+ render(d)}
+function tag(p){return p.verified?'<span class="tag v">✓ Verified real</span>':'<span class="tag">Awaiting check</span>'}
+function render(list){
+ var g=$("grid");g.innerHTML="";
+ list.forEach(function(p){
+  var b=document.createElement("button");b.className="card";
+  b.innerHTML='<div class="ph" style="background-image:url(\''+imgUrl(p.image_path)+'\')"></div><div class="cb"><b>'+esc(p.title)+'</b><span>'+esc(p.place)+(p.category?(p.place?" · ":"")+esc(p.category):"")+'</span><br>'+tag(p)+'</div>';
+  b.onclick=function(){openP(p)};g.appendChild(b)})}
+
+function openReport(p){
+ if(!user){openAuth();return}
+ var opts=REASONS.map(function(r){return'<option>'+r+'</option>'}).join("");
+ openM('<div class="cb"><button class="x" onclick="closeM()">Close ✕</button><h2>Report this photo</h2><p style="color:var(--mut)">Tell us what is wrong. An admin will review it.</p><select id="rs"><option value="">Choose a reason</option>'+opts+'</select><input id="rd" placeholder="More details (optional)"><div class="msg" id="rm"></div><button class="pri" id="rb">Send report</button></div>');
+ $("rb").onclick=async function(){
+  var s=$("rs").value,m=$("rm");
+  if(!s){m.textContent="Please choose a reason.";return}
+  $("rb").disabled=true;m.textContent="Sending…";
+  var d=$("rd").value.trim();
+  var r=await sb.from("reports").insert({photo_id:p.id,reason:s+(d?": "+d:"")});
+  if(r.error){
+   m.textContent=r.error.code==="23505"?"You already reported this photo. Thank you.":"Could not send: "+r.error.message;
+   $("rb").disabled=false;return}
+  openM('<div class="cb"><button class="x" onclick="closeM()">Close ✕</button><h2>Thank you</h2><p>Your report was sent. An admin will review this photo.</p></div>')}}
+
+function openP(p){
+ var mine=user&&p.user_id===user.id&&!isAdmin;
+ var adm=isAdmin?'<div class="rl" id="rl">Checking reports…</div><button class="pri" id="vf">'+(p.verified?'Remove verified badge':'Mark as verified real')+'</button><button class="sec" id="ad">Delete this photo (admin)</button><div class="msg" id="admsg"></div>':'';
+ var rep=(!isAdmin&&!mine)?'<button class="sec" id="rp">Report this photo</button>':'';
+ openM('<img class="full" src="'+imgUrl(p.image_path)+'" alt=""><div class="cb"><button class="x" onclick="closeM()">Close ✕</button><h2>'+esc(p.title)+'</h2>'+tag(p)+(p.category?'<p><b>Category:</b> '+esc(p.category)+'</p>':'')+'<p><b>Where &amp; when:</b> '+esc(p.place)+'</p><p><b>The story:</b> '+esc(p.story)+'</p>'+adm+rep+(mine?'<button class="sec" id="del">Delete my photo</button>':'')+'</div>');
+ if(!isAdmin&&!mine)$("rp").onclick=function(){openReport(p)};
+ if(isAdmin){
+  sb.from("reports").select("reason").eq("photo_id",p.id).then(function(r){
+   var box=$("rl");if(!box)return;
+   if(r.error||!r.data||!r.data.length){box.style.display="none";return}
+   box.innerHTML='<b>'+r.data.length+' report'+(r.data.length>1?'s':'')+':</b>'+r.data.map(function(x){return'<div>• '+esc(x.reason)+'</div>'}).join("")+'<button class="sec" id="dm">Dismiss reports (photo is fine)</button>';
+   $("dm").onclick=async function(){
+    await sb.from("reports").delete().eq("photo_id",p.id);closeM();load()}});
+  $("vf").onclick=async function(){
+   var r=await sb.from("photos").update({verified:!p.verified}).eq("id",p.id).select();
+   if(r.error||!r.data.length){$("admsg").textContent="Not allowed. Check that your admin setup ran.";return}
+   closeM();load()};
+  $("ad").onclick=async function(){
+   if(!confirm("Delete this photo for everyone?"))return;
+   await sb.storage.from("photos").remove([p.image_path]);
+   await sb.from("photos").delete().eq("id",p.id);closeM();load()}}
+ if(mine)$("del").onclick=async function(){
+  if(!confirm("Delete this photo?"))return;
+  await sb.storage.from("photos").remove([p.image_path]);
+  await sb.from("photos").delete().eq("id",p.id);closeM();load()}}
+
+chips();
+sb.auth.onAuthStateChange(function(ev,s){setTimeout(function(){setUser(s)},0)});
+</script>
+</body>
+</html>
